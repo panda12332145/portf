@@ -15,13 +15,11 @@ import { ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  const [site, artworks, faqs, types] = await Promise.all([
-    Promise.resolve(getSite()),
-    getArtworks(),
-    getFaqs(),
-    getCommissions(),
-  ]);
+export default function HomePage() {
+  const site = getSite();
+  const artworks = getArtworks();
+  const faqs = getFaqs();
+  const types = getCommissions();
 
   return (
     <SmoothScroll>

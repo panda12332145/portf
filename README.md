@@ -17,7 +17,7 @@ Um **único projeto Next.js** que junta, num só site:
 
 Duplo clique em **`iniciar.bat`** (ou rode `iniciar.bat` no terminal). Ele faz tudo:
 
-1. confere se o Node instalado é 22+ (o banco SQLite usa `better-sqlite3`);
+1. confere se o Node instalado é **22.5+** e se ele já expõe o SQLite embutido (`node:sqlite`);
 2. instala as dependências na primeira vez;
 3. sincroniza o banco `data/atelier.sqlite`;
 4. sobe o servidor em `http://localhost:3000`;
@@ -43,12 +43,18 @@ chmod +x iniciar.sh
 ```
 
 Os dois scripts ficam na raiz do projeto e não alteram nada além de `data/atelier.sqlite`.
+Eles também cuidam do `node:sqlite`: se o Node for 22.5–23.3 (que exige a flag
+`--experimental-sqlite`), a flag é adicionada automaticamente.
 
 ---
 
 ## 1. Rodando
 
-Requer **Node 22+** (o `better-sqlite3` é nativo).
+Requer **Node 22.5 ou superior** (recomendado 22 LTS ou 24).
+
+> **Não é preciso compilador C++ / Visual Studio.** O banco usa o SQLite
+> embutido do Node (`node:sqlite`), então `npm install` baixa apenas
+> JavaScript puro — funciona igual no Windows, macOS e Linux.
 
 ```bash
 npm install
@@ -100,11 +106,20 @@ O livro **só lê** arquivos de `public/book/`. As obras do portfólio vivem em 
 
 ---
 
-## 3. Banco: SQLite + Drizzle
+## 3. Banco: SQLite (embutido no Node)
 
 - Arquivo: `data/atelier.sqlite` (override por `ATELIER_DB_PATH`).
-- Acesso: `better-sqlite3` + `drizzle-orm` (schema em `src/db/schema.ts`, consultas em `src/db/queries.ts`).
-- `src/db/build.ts` contém o DDL, o seed e o `ensureDatabase()`.
+- Acesso: **`node:sqlite`** — o SQLite que já vem dentro do Node desde a 22.5.
+  Sem módulos nativos, sem ORM: SQL direto em `src/db/queries.ts`, com um helper
+  fino (`src/db/sqlite.ts`) que cuida de statements preparados, transações e
+  parâmetros nomeados.
+- `src/db/schema.ts` traz o **DDL** (as tabelas, comentadas) e os tipos das linhas;
+  `src/db/build.ts` cria o arquivo, semeia o conteúdo e mantém o `ensureDatabase()`.
+- Para inspecionar: `npm run db:inspect` (ou `npm run db:inspect -- --sql "…"`).
+
+> Por que não `better-sqlite3`/Drizzle? `better-sqlite3` é um módulo nativo: em
+> versões de Node sem binário pré-compilado ele tenta compilar e exige Visual
+> Studio no Windows. Com `node:sqlite` a instalação é 100% JavaScript.
 
 ### Tabelas
 
@@ -182,9 +197,21 @@ npm run build     # roda db:build antes do build
 npm start
 ```
 
-- Node **22+**.
+- Node **22.5+** (nada de compilador: só JavaScript).
 - Leve `data/atelier.sqlite` junto (já versionado) ou deixe o `ensureDatabase()` criar no primeiro boot.
 - Para banco somente leitura em produção, aponte `ATELIER_DB_PATH` para uma cópia e use o /estudio só em desenvolvimento.
+
+---
+
+## 6.1 Problemas comuns
+
+| sintoma | causa / solução |
+| --- | --- |
+| `gyp ERR! find VS … Visual Studio` | você está numa versão antiga do projeto que usava `better-sqlite3`. Rode `npm install` novamente depois de atualizar (`git pull`): o projeto agora usa o SQLite do Node e não compila nada. |
+| `Node vXX e antigo demais` no `iniciar.bat` | atualize o Node para 22 LTS (22.13+) ou 24 em https://nodejs.org |
+| `ExperimentalWarning: SQLite is an experimental feature` | aviso inofensivo do Node; os scripts já o silenciam com `--disable-warning=ExperimentalWarning`. |
+| `EPERM … rmdir node_modules` no Windows | editor aberto, antivírus ou OneDrive segurando a pasta. Feche-os e rode de novo (o `iniciar.bat` já tenta reinstalar limpando `node_modules`). |
+| quero recomeçar o banco do zero | `npm run db:seed` |
 
 ---
 

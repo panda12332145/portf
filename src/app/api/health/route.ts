@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const { book, pages } = await getBook();
+    const { book, pages } = getBook();
     return NextResponse.json({
       ok: true,
       database: dbPath(),

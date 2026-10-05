@@ -11,7 +11,7 @@ export const metadata = {
  * Editor visual do enquadramento das páginas do livro.
  * Lê e grava direto no SQLite (data/atelier.sqlite).
  */
-export default async function EstudioPage() {
-  const { book, pages } = await getBook();
+export default function EstudioPage() {
+  const { book, pages } = getBook();
   return <LayoutStudio book={book} pages={pages} />;
 }

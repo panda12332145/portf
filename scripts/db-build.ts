@@ -4,6 +4,8 @@
  *
  *   npm run db:build    → cria o que falta, preserva ajustes do /estudio
  *   npm run db:seed     → recria tudo do zero (--force)
+ *
+ * Usa o SQLite embutido do Node (node:sqlite) — sem módulos nativos.
  */
 import { buildDatabase, dbPath } from "../src/db/build";
 

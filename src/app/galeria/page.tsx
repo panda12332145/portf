@@ -6,12 +6,10 @@ import BookPlates from "@/components/site/BookPlates";
 
 export const dynamic = "force-dynamic";
 
-export default async function GaleriaPage() {
-  const [site, artworks, { book, pages }] = await Promise.all([
-    Promise.resolve(getSite()),
-    getArtworks(),
-    getBook(),
-  ]);
+export default function GaleriaPage() {
+  const site = getSite();
+  const artworks = getArtworks();
+  const { book, pages } = getBook();
 
   const illustrated = pages.filter((p) => p.image);
 

@@ -37,22 +37,52 @@ echo
 [ -f package.json ] || { echo "[X] rode este script na raiz do projeto"; exit 1; }
 
 # ---------------------------- Node.js -------------------------------
+# Requisito: Node 22.5+ (SQLite embutido, node:sqlite) — sem compilador C++.
 command -v node >/dev/null 2>&1 || {
-  echo "[X] Node.js não encontrado. Instale a versão 22+: https://nodejs.org"
+  echo "[X] Node.js não encontrado. Instale a versão 22 LTS ou superior: https://nodejs.org"
   exit 1
 }
-NODE_MAJOR="$(node -v | sed 's/^v\([0-9]*\).*/\1/')"
-if [ "${NODE_MAJOR:-0}" -lt 22 ]; then
-  echo "[X] Node $(node -v) encontrado, mas o projeto exige Node 22+ (better-sqlite3)."
+NODE_VER="$(node -v)"
+NODE_MAJOR="$(echo "$NODE_VER" | sed 's/^v\([0-9]*\).*/\1/')"
+NODE_MINOR="$(echo "$NODE_VER" | sed 's/^v[0-9]*\.\([0-9]*\).*/\1/')"
+if [ "${NODE_MAJOR:-0}" -lt 22 ] || { [ "${NODE_MAJOR:-0}" -eq 22 ] && [ "${NODE_MINOR:-0}" -lt 5 ]; }; then
+  echo "[X] Node $NODE_VER encontrado, mas o projeto exige Node 22.5 ou superior."
+  echo "    (o banco usa o SQLite embutido do Node — sem compilador C++)"
   echo "    Instale a LTS: https://nodejs.org"
   exit 1
 fi
-echo "[1/4] Node $(node -v) OK"
+
+# node:sqlite disponível? (22.5–23.3 exige --experimental-sqlite)
+export NODE_OPTIONS="--disable-warning=ExperimentalWarning"
+if ! node -e "require('node:sqlite')" >/dev/null 2>&1; then
+  if node --experimental-sqlite -e "require('node:sqlite')" >/dev/null 2>&1; then
+    export NODE_OPTIONS="--experimental-sqlite $NODE_OPTIONS"
+    echo "[1/4] Node $NODE_VER OK (com --experimental-sqlite)"
+  else
+    echo "[X] O Node $NODE_VER não expôs o módulo node:sqlite."
+    echo "    Atualize para Node 22 LTS (22.13+) ou 24: https://nodejs.org"
+    exit 1
+  fi
+else
+  echo "[1/4] Node $NODE_VER OK"
+fi
 
 # --------------------------- dependências ---------------------------
 if [ ! -f node_modules/next/package.json ]; then
   echo "[2/4] Instalando dependências (primeira vez, pode demorar)…"
-  npm install || { echo "[X] falha no npm install"; exit 1; }
+  if ! npm install --no-audit --no-fund; then
+    echo
+    echo "[!] A instalação falhou. Causas comuns: editor aberto segurando a pasta,"
+    echo "    antivírus/sincronização de arquivos, ou node_modules corrompido."
+    echo "    Tentando de novo em 5s (limpando node_modules)…"
+    sleep 5
+    rm -rf node_modules 2>/dev/null || true
+    npm install --no-audit --no-fund || {
+      echo "[X] Não foi possível instalar as dependências."
+      echo "    Dica: mova o projeto para um caminho simples (ex.: ~/dev/portf)."
+      exit 1
+    }
+  fi
 else
   echo "[2/4] Dependências OK"
 fi

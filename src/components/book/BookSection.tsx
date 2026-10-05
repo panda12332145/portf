@@ -6,8 +6,8 @@ import { SectionHeader } from "@/components/site/SectionHeader";
  * A vitrine do livro: o palco 3D entra no lugar da antiga seção de
  * portfólio "01 — Portfólio". Todo o conteúdo vem do SQLite.
  */
-export default async function BookSection() {
-  const { book, pages } = await getBook();
+export default function BookSection() {
+  const { book, pages } = getBook();
 
   return (
     <section id="livro" className="relative px-4 pt-20 sm:px-6 md:px-12 md:pt-28">

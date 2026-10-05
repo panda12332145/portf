@@ -4,5 +4,5 @@ import { getCommissions } from "@/db/queries";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return NextResponse.json({ commissions: await getCommissions() });
+  return NextResponse.json({ commissions: getCommissions() });
 }

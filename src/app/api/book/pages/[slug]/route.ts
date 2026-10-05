@@ -15,7 +15,7 @@ const ENUMS = {
 /** GET /api/book/pages/[slug] */
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const page = await getPageBySlug(slug);
+  const page = getPageBySlug(slug);
   if (!page) return NextResponse.json({ error: "página não encontrada" }, { status: 404 });
   return NextResponse.json(page);
 }
@@ -36,7 +36,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
   }
 
   if (body.reset === true) {
-    const page = await resetPageLayout(slug);
+    const page = resetPageLayout(slug);
     if (!page) return NextResponse.json({ error: "página não encontrada" }, { status: 404 });
     return NextResponse.json({ page, mode: "auto" });
   }
@@ -57,7 +57,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
     return NextResponse.json({ error: "nenhum campo válido para atualizar" }, { status: 400 });
   }
 
-  const page = await savePageLayout(slug, clampLayout(patch));
+  const page = savePageLayout(slug, clampLayout(patch));
   if (!page) return NextResponse.json({ error: "página não encontrada" }, { status: 404 });
   return NextResponse.json({ page, mode: "manual" });
 }
