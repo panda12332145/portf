@@ -152,7 +152,8 @@ echo [4/4] Subindo o servidor ^(modo !MODE!, porta !PORT!)...
 echo.
 echo   ------------------------------------------------------------
 echo    Site ......... http://localhost:!PORT!
-echo    Estudio ...... http://localhost:!PORT!/estudio
+echo    Estudio ...... http://localhost:!PORT!/estudio   ^(pede login^)
+echo    Admin ........ http://localhost:!PORT!/admin     ^(senha no inicio desta janela^)
 echo    Galeria ...... http://localhost:!PORT!/galeria
 echo    API .......... http://localhost:!PORT!/api/health
 if defined LANIP echo    No celular ... http://!LANIP!:!PORT!   ^(mesma rede Wi-Fi^)

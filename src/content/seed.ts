@@ -44,7 +44,57 @@ export const SITE = {
   commissionSectionLede:
     "Escolha um ou mais estilos, descreva a ideia e envie. Respondemos por e-mail com orçamento e prazo.",
   commissionNote: "3 vagas restantes para abril.",
+  commissionFormName: "Nome",
+  commissionFormNamePlaceholder: "Como podemos te chamar?",
+  commissionFormEmail: "E-mail",
+  commissionFormEmailPlaceholder: "seunome@email.com",
+  commissionFormIdea: "Descrição da ideia",
+  commissionFormIdeaPlaceholder:
+    "Conte sobre a cena, os personagens, referências, cores e prazo desejado.",
+  commissionFormStyles: "Estilos de arte — selecione quantos quiser",
+  commissionFormSubmit: "Enviar pedido",
+  commissionFormEstimate: "Estimativa",
+  commissionFormFootnote:
+    "Não trabalhamos com gore, conteúdo NSFW ou cópia do estilo de outros artistas — veja o FAQ.",
+  commissionFormSuccess: "Pedido enviado, {nome}.",
+  commissionFormSuccessNote: "Recebemos seu pedido. Você terá retorno em até 48h úteis.",
   footerNote: "comissões abertas · BR",
+
+  /* navegação, botões e ícone (o ícone usa o nome de um ícone Lucide) */
+  siteIcon: "Flower2",
+  navAboutLabel: "Sobre",
+  navBookLabel: "Livro",
+  navPortfolioLabel: "Portfólio",
+  navFaqLabel: "FAQ",
+  navCtaLabel: "Comissões",
+  heroCtaPrimary: "Pedir uma comissão",
+  heroCtaSecondary: "Abrir o livro",
+  heroCtaTertiary: "Ver portfólio",
+
+  /* detalhes de seção */
+  bookSectionFootnote:
+    "as páginas do livro vivem em public/book/ e são enquadradas pelos valores gravados no SQLite",
+  galleryPageEyebrow: "02 — Acervo",
+  galleryPageTitle: "Todas as obras",
+  galleryPageLede:
+    "As {obras} obras do estúdio e as {paginas} páginas ilustradas de *{livro}*, com suas descrições. Clique em qualquer peça para ampliar.",
+  galleryWorksTitle: "Obras do estúdio",
+  galleryPlatesTitle: "Páginas do livro — pasta public/book/",
+  galleryPlatesNote:
+    "Estas imagens ficam numa pasta separada, exclusiva do livro, e cada uma recebe o enquadramento gravado no SQLite (a folha de rosto e os interlúdios são só texto).",
+  galleryFooterNote: "acervo servido por SQLite (data/atelier.sqlite)",
+  footerGalleryLabel: "Galeria",
+  footerStudioLabel: "Estúdio",
+  footerAdminLabel: "Admin",
+  footerTopLabel: "Voltar ao topo",
+
+  /* título da aba do navegador */
+  metaTitle: "Atelier Girassol — portfólio de arte & livro ilustrado",
+  metaDescription:
+    "Portfólio do Atelier Girassol: ilustração, aquarela, guache e comissões abertas — com o livro ilustrado interativo “O Jardim das Horas” em 3D.",
+  metaOgTitle: "Atelier Girassol — portfólio de arte & livro ilustrado",
+  metaOgDescription:
+    "Ilustração feita à mão desde 2019, comissões abertas e um livro ilustrado para folhear em 3D.",
 } as const;
 
 /* --------------------------- obras do site ------------------------ */

@@ -66,6 +66,36 @@ export function getSite(): SiteContent {
   return { ...meta, stats: stats.length ? stats : [...SITE.stats] } as SiteContent;
 }
 
+export interface SiteSettings {
+  /** comissões abertas? (o painel controla isto) */
+  commissionsOpen: boolean;
+  commissionsClosedTitle: string;
+  commissionsClosedNote: string;
+  commissionEmail: string;
+  newRequests: number;
+}
+
+/** Configurações que o site precisa saber (tabela `settings`). */
+export function getSiteSettings(): SiteSettings {
+  const rows = sqlite.all<{ key: string; value: string }>(
+    `SELECT key, value FROM settings
+      WHERE key IN ('commissions_open','commissions_closed_title','commissions_closed_note','commission_email')`,
+  );
+  const map: Record<string, string> = {};
+  for (const r of rows) map[r.key] = r.value;
+
+  const newRequests =
+    sqlite.get<{ n: number }>(`SELECT COUNT(*) AS n FROM requests WHERE status = 'novo'`)?.n ?? 0;
+
+  return {
+    commissionsOpen: (map.commissions_open ?? "1") === "1",
+    commissionsClosedTitle: map.commissions_closed_title ?? "Comissões fechadas — por enquanto",
+    commissionsClosedNote: map.commissions_closed_note ?? "",
+    commissionEmail: map.commission_email ?? "contato@ateliergirassol.art",
+    newRequests,
+  };
+}
+
 /* ------------------------------- galeria -------------------------- */
 
 export function getArtworks(): Artwork[] {

@@ -72,8 +72,15 @@ Outros comandos:
 | `npm run db:inspect` | resumo do banco (livro, páginas, contagens) |
 | `npm run db:inspect -- --sql "SELECT * FROM pages"` | SQL livre |
 | `npm run dev:lan` | como o `dev`, mas escutando na rede (`0.0.0.0`) para testar no celular |
+| `npm run admin:pass` | **conta da administradora**: gera uma senha nova para a primeira conta e mostra no terminal |
+| `npm run admin:pass -- --list` | lista as contas administrativas |
+| `npm run admin:pass -- email@x.com senha` | cria/atualiza a conta com esse e-mail e senha |
 | `npm run build` / `npm run start:lan` | build e produção (escuta em `0.0.0.0`) |
 | `npm run typecheck` | TypeScript |
+
+> Na **primeira execução** o banco cria a conta administrativa e imprime a senha
+> inicial no terminal (algo como `senha inicial: k7Qm2x_Pd91`). Anote — ela não
+> fica guardada em lugar nenhum em texto puro. Perdeu? `npm run admin:pass`.
 
 O arquivo `data/atelier.sqlite` **é versionado de propósito**: clonando o repositório o site já funciona. Se ele não existir (ou estiver vazio), o servidor o recria sozinho na primeira requisição (`ensureDatabase()`), usando `src/content/seed.ts` + `public/book/`.
 
@@ -131,6 +138,13 @@ O livro **só lê** arquivos de `public/book/`. As obras do portfólio vivem em 
 | `artworks` | obras do portfólio: título, técnica, ano, imagem, posição no grid, proporção, tags |
 | `faqs` | perguntas frequentes (com lista opcional e nota) |
 | `commissions` | tabela de preços das comissões |
+| `admins` | a conta administrativa: e-mail + `Argon2id(senha, salt)` de 64 bytes |
+| `sessions` | sessões abertas (token, validade, agente) — revogáveis |
+| `settings` | configurações: comissões abertas/fechadas, e-mail de destino, webhook, SMTP |
+| `requests` | caixa de entrada: cada pedido enviado pelo formulário do site |
+
+> `npm run db:seed` recria o conteúdo editorial (site_meta, livro, obras, FAQ,
+> preços) **mas não apaga** conta, sessões, configurações nem pedidos recebidos.
 
 ### Enquadramento (o coração do “dinâmico”)
 
@@ -162,6 +176,52 @@ UPDATE pages
 
 ---
 
+## 3.1 Área administrativa (`/admin`)
+
+A área administrativa tem **só a tela de login** até você entrar — nada do painel
+é renderizado antes disso. Depois do login abre o painel, onde praticamente tudo
+do site é editável:
+
+| aba | o que dá para fazer |
+| --- | --- |
+| **Painel** | visão geral (nº de obras, páginas, FAQs, estilos), abrir/fechar comissões num clique, caminho do banco |
+| **Textos e imagens** | todos os textos do site (hero, seções, botões, rodapé, título da aba), imagens (topo, fundo), ícone da marca e o **catálogo de estilos de arte**… além de qualquer outra chave de `site_meta` |
+| **Comissões** | abertas/fechadas + descrição da fila fechada, **preços** de cada estilo, **e-mail que recebe as comissões**, **webhook do Discord** (com botão de teste) e SMTP opcional |
+| **FAQ** | criar, editar, reordenar e excluir perguntas, com lista e nota de cada uma |
+| **Obras do site** | adicionar, subir/descer, editar e **excluir** obras; enviar imagem; proporção, colunas e deslocamento no grid |
+| **Livro** | ficha, capa e **todas as páginas do miolo**: adicionar, mover, editar, excluir, trocar a arte e ajustar o enquadramento (ou recalcular automático) |
+| **Mensagens** | cada pedido enviado pelo formulário, com estilos, estimativa, estados (novo/lido/respondido/arquivado), reenvio ao Discord e resposta por e-mail |
+| **Conta** | nome, e-mail de entrada e troca de senha (com a senha atual) |
+
+O botão **Estúdio** (`/estudio`) continua sendo o editor visual do enquadramento,
+com pré-visualização da página; ele também pede login agora.
+
+### Como a segurança está montada
+
+- **Senha:** Argon2id (JavaScript puro, via `@noble/hashes`) com **salt aleatório
+  de 16 bytes por conta** e **hash de 64 bytes**. Parâmetros guardados junto da
+  conta (`{"t":2,"m":19456,"p":1,"dkLen":64}`), então dá para endurecer sem migrar.
+- **Sessão:** token aleatório de 64 caracteres guardado na tabela `sessions` e
+  entregue num cookie `HttpOnly` + `SameSite=Lax`; expira em 7 dias e é revogável
+  (trocar a senha encerra as outras sessões).
+- **Cofre:** o webhook do Discord e a senha de SMTP ficam **cifrados com
+  AES-256-GCM** no banco. A chave vem de `ATELIER_SECRET` (recomendado) ou do
+  arquivo `.atelier-secret`, criado sozinho na raiz do projeto e **fora do git**.
+  O que está no banco tem a forma `v1.<iv>.<tag>.<cifra>`.
+- **Login:** 8 tentativas por 10 minutos por IP; erro genérico (não revela se o
+  e-mail existe) e uma espera artificial de 350 ms.
+
+### Tema claro / escuro
+
+No topo de todas as páginas (site e painel) existe um seletor de tema com três
+opções: **Sistema** (padrão de fábrica — segue o `prefers-color-scheme` do seu
+aparelho), **Claro** e **Escuro**. A escolha fica no `localStorage` do navegador
+(chave `atelier-tema`), então ela se mantém nas próximas visitas; um script no
+`<head>` aplica o tema antes da primeira pintura, sem piscar. O palco do livro 3D
+e o lightbox continuam escuros nos dois temas.
+
+---
+
 ## 4. O livro 3D
 
 - `src/components/book/Book.tsx` — geometria das folhas (malha deformável = papel de verdade), molas de física, arrasto de página, capa com dobradiça.
@@ -180,11 +240,21 @@ Interações: clique para abrir, arraste a folha como papel, clique na borda par
 | --- | --- |
 | `/` | home: hero, **seção do livro 3D**, portfólio, FAQ, comissões |
 | `/galeria` | acervo completo: obras do estúdio + as páginas do livro (`public/book/`) |
-| `/estudio` | editor visual de enquadramento (grava no SQLite) |
+| `/estudio` | editor visual de enquadramento (grava no SQLite) — pede login |
+| `/admin` | área administrativa: tela de login e, depois dela, o painel completo |
 | `GET /api/book` | livro + páginas com layout |
 | `GET /api/book/pages/[slug]` | uma página |
 | `PATCH /api/book/pages/[slug]` | atualiza o enquadramento (`{zoom, rotation, offsetX…}` ou `{reset:true}`) |
 | `GET /api/artworks` · `/api/faqs` · `/api/commissions` | conteúdo do portfólio |
+| `POST /api/commissions` | recebe o formulário: grava o pedido na caixa de entrada e avisa por Discord/e-mail |
+| `POST /api/admin/login` · `DELETE /api/admin/session` | entrar e sair |
+| `GET/PATCH /api/admin/settings` | comissões abertas/fechadas, e-mail, webhook, SMTP |
+| `GET/PATCH /api/admin/site-meta` | os textos do site (e criar/apagar chaves) |
+| `GET/PATCH /api/admin/book` | ficha e capa do livro |
+| `GET/POST/PUT /api/admin/resources/[resource]` | listar, criar e reordenar obras, FAQ, estilos e páginas |
+| `PATCH/DELETE /api/admin/resources/[resource]/[id]` | editar e excluir um registro |
+| `GET/POST /api/admin/upload` | acervo de imagens e envio de arquivos (`folder=site|book`) |
+| `PATCH /api/admin/account` | nome, e-mail e senha da conta |
 | `GET /api/health` | checagem (caminho do banco, nº de páginas) |
 
 ---
@@ -200,6 +270,11 @@ npm start
 - Node **22.5+** (nada de compilador: só JavaScript).
 - Leve `data/atelier.sqlite` junto (já versionado) ou deixe o `ensureDatabase()` criar no primeiro boot.
 - Para banco somente leitura em produção, aponte `ATELIER_DB_PATH` para uma cópia e use o /estudio só em desenvolvimento.
+- **Defina `ATELIER_SECRET`** no servidor (uma frase longa e única). Sem ela, a
+  chave do cofre é gerada em `.atelier-secret` na pasta do projeto — que em
+  hospedagem pode ser recriada a cada deploy, invalidando os segredos salvos.
+- A área administrativa pede login, mas não há HTTPS embutido: em produção,
+  publique atrás de um proxy com TLS.
 
 ---
 
@@ -211,7 +286,10 @@ npm start
 | `Node vXX e antigo demais` no `iniciar.bat` | atualize o Node para 22 LTS (22.13+) ou 24 em https://nodejs.org |
 | `ExperimentalWarning: SQLite is an experimental feature` | aviso inofensivo do Node; os scripts já o silenciam com `--disable-warning=ExperimentalWarning`. |
 | `EPERM … rmdir node_modules` no Windows | editor aberto, antivírus ou OneDrive segurando a pasta. Feche-os e rode de novo (o `iniciar.bat` já tenta reinstalar limpando `node_modules`). |
-| quero recomeçar o banco do zero | `npm run db:seed` |
+| esqueci a senha do painel | `npm run admin:pass` (mostra uma senha nova) |
+| quero trocar o e-mail da conta | painel → **Conta**, ou `npm run admin:pass -- email@x.com senha` |
+| quero recomeçar o banco do zero | `npm run db:seed` (mantém conta, configurações e pedidos) |
+| voltar ao tema escuro fixo | no seletor de tema do topo, escolha **Escuro** (ou limpe a chave `atelier-tema` do navegador para voltar a seguir o sistema) |
 
 ---
 

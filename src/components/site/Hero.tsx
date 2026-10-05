@@ -13,7 +13,13 @@ const item = {
 
 export default function Hero({ site }: { site: SiteContent }) {
   return (
-    <section id="sobre" className="relative min-h-[100svh] px-5 md:px-12">
+    // scope-dark: o topo é uma "capa" sobre a foto — tipo claro nos dois temas
+    <section id="sobre" className="scope-dark relative min-h-[100svh] px-5 md:px-12">
+      {/* véu para o texto respirar sobre a fotografia */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(12,7,2,0.55),rgba(12,7,2,0.18)_38%,rgba(12,7,2,0.55))]"
+      />
       <motion.div
         initial="hidden"
         animate="show"
@@ -54,16 +60,16 @@ export default function Hero({ site }: { site: SiteContent }) {
           <motion.div variants={item} className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
             <a
               href="#comissoes"
-              className="rounded-md bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.16em] text-cream transition-colors duration-300 hover:bg-black"
+              className="rounded-md bg-strong px-6 py-3 text-[12px] font-bold uppercase tracking-[0.16em] text-on-strong transition-opacity duration-300 hover:opacity-90"
             >
-              Pedir uma comissão
+              {site.heroCtaPrimary}
             </a>
             <a
               href="#livro"
               className="group flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-cream/80 transition-colors hover:text-cream"
             >
               <span className="border-b border-cream/30 pb-0.5 transition-colors group-hover:border-cream">
-                Abrir o livro
+                {site.heroCtaSecondary}
               </span>
               <BookOpen size={13} />
             </a>
@@ -72,7 +78,7 @@ export default function Hero({ site }: { site: SiteContent }) {
               className="group flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-cream/60 transition-colors hover:text-cream"
             >
               <span className="border-b border-cream/20 pb-0.5 transition-colors group-hover:border-cream/60">
-                Ver portfólio
+                {site.heroCtaTertiary}
               </span>
               <ArrowDown size={13} />
             </a>

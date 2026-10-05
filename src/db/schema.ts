@@ -108,10 +108,70 @@ CREATE TABLE IF NOT EXISTS commissions (
 
 CREATE INDEX IF NOT EXISTS idx_pages_book ON pages(book_id, ord);
 CREATE INDEX IF NOT EXISTS idx_artworks_ord ON artworks(ord);
+
+/* ------------------------------------------------------------------
+ *  Área administrativa
+ *  Estas tabelas NÃO entram em TABLES: o "db:seed --force" recria o
+ *  conteúdo editorial, mas nunca apaga a conta do admin,
+ *  as sessões, as configurações nem a caixa de pedidos recebidos.
+ * ------------------------------------------------------------------ */
+
+-- a senha nunca é guardada: guardamos Argon2id(senha, salt) com 64 bytes
+-- (params traz t/m/p/dkLen em JSON, para poder endurecer sem migração)
+CREATE TABLE IF NOT EXISTS admins (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  email         TEXT NOT NULL UNIQUE,
+  name          TEXT NOT NULL DEFAULT '',
+  password_hash TEXT NOT NULL,
+  salt          TEXT NOT NULL,
+  params        TEXT NOT NULL,
+  last_login_at INTEGER,
+  created_at    INTEGER NOT NULL DEFAULT (unixepoch() * 1000),
+  updated_at    INTEGER NOT NULL DEFAULT (unixepoch() * 1000)
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token      TEXT PRIMARY KEY,
+  admin_id   INTEGER NOT NULL REFERENCES admins(id) ON DELETE CASCADE,
+  created_at INTEGER NOT NULL DEFAULT (unixepoch() * 1000),
+  expires_at INTEGER NOT NULL,
+  user_agent TEXT
+);
+
+-- secret = 1 → value está cifrado com AES-256-GCM (webhook, senha de SMTP…)
+CREATE TABLE IF NOT EXISTS settings (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL DEFAULT '',
+  secret     INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL DEFAULT (unixepoch() * 1000)
+);
+
+-- caixa de entrada das comissões (o que o formulário do site envia)
+CREATE TABLE IF NOT EXISTS requests (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  name       TEXT NOT NULL,
+  email      TEXT NOT NULL,
+  message    TEXT NOT NULL DEFAULT '',
+  styles     TEXT,
+  total      REAL NOT NULL DEFAULT 0,
+  status     TEXT NOT NULL DEFAULT 'novo',
+  discord_ok INTEGER NOT NULL DEFAULT 0,
+  email_ok   INTEGER NOT NULL DEFAULT 0,
+  error      TEXT,
+  user_agent TEXT,
+  created_at INTEGER NOT NULL DEFAULT (unixepoch() * 1000)
+);
+
+CREATE INDEX IF NOT EXISTS idx_requests_created ON requests(created_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_admin ON sessions(admin_id);
 `;
 
-/** Tabelas na ordem em que podem ser apagadas (db:seed --force). */
+/** Tabelas de conteúdo, na ordem em que podem ser apagadas (db:seed --force). */
 export const TABLES = ["site_meta", "books", "pages", "artworks", "faqs", "commissions"] as const;
+
+/** Estados possíveis de um pedido de comissão. */
+export const REQUEST_STATUSES = ["novo", "lido", "respondido", "arquivado"] as const;
+export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 
 /* --------------------------- tipos das linhas --------------------- */
 
@@ -205,4 +265,46 @@ export interface CommissionRow {
   ord: number;
   name: string;
   price: number;
+}
+
+export interface AdminRow {
+  id: number;
+  email: string;
+  name: string;
+  password_hash: string;
+  salt: string;
+  params: string;
+  last_login_at: number | null;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface SessionRow {
+  token: string;
+  admin_id: number;
+  created_at: number;
+  expires_at: number;
+  user_agent: string | null;
+}
+
+export interface SettingRow {
+  key: string;
+  value: string;
+  secret: Bool01;
+  updated_at: number;
+}
+
+export interface RequestRow {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  styles: string | null;
+  total: number;
+  status: string;
+  discord_ok: Bool01;
+  email_ok: Bool01;
+  error: string | null;
+  user_agent: string | null;
+  created_at: number;
 }

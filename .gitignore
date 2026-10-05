@@ -10,3 +10,6 @@ next-env.d.ts
 data/*.sqlite-journal
 data/*.sqlite-wal
 data/*.sqlite-shm
+
+# chave do cofre (AES-256-GCM) — gerada no primeiro uso, nunca versionada
+.atelier-secret

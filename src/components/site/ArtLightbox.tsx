@@ -101,7 +101,7 @@ export function ArtLightbox({
   // portal: garante que a ampliação fique acima da navbar e de qualquer seção
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex flex-col bg-[#0b0803]/94 backdrop-blur-md"
+      className="scope-dark fixed inset-0 z-[120] flex flex-col bg-[#0b0803]/94 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
     >

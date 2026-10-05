@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, FolderOpen, LibraryBig } from "lucide-react";
 import { getArtworks, getBook, getSite } from "@/db/queries";
 import GalleryGrid from "@/components/site/GalleryGrid";
+import { fillTemplate, splitEmphasis } from "@/lib/cn";
 import BookPlates from "@/components/site/BookPlates";
 
 export const dynamic = "force-dynamic";
@@ -35,22 +36,34 @@ export default function GaleriaPage() {
 
         <header className="mb-14 mt-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-sun-300">
-            02 — Acervo
+            {site.galleryPageEyebrow}
           </p>
           <h1 className="mt-3 font-display text-4xl font-medium tracking-tight text-cream md:text-5xl">
-            Todas as obras
+            {site.galleryPageTitle}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-cream/65">
-            {artworks.length} obras do estúdio e as {illustrated.length} páginas ilustradas de{" "}
-            <em className="italic text-cream/80">{book.title}</em>, com suas descrições. Clique em
-            qualquer peça para ampliar.
+            {splitEmphasis(
+              fillTemplate(site.galleryPageLede, {
+                obras: String(artworks.length),
+                paginas: String(illustrated.length),
+                livro: book.title,
+              }),
+            ).map((part, i) =>
+              part.em ? (
+                <em key={i} className="italic text-cream/80">
+                  {part.text}
+                </em>
+              ) : (
+                <span key={i}>{part.text}</span>
+              ),
+            )}
           </p>
         </header>
 
         <section>
           <h2 className="mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-cream/50">
             <span className="h-px w-8 bg-cream/25" />
-            Obras do estúdio
+            {site.galleryWorksTitle}
           </h2>
           <GalleryGrid artworks={artworks} />
         </section>
@@ -59,17 +72,16 @@ export default function GaleriaPage() {
           <h2 className="mb-3 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-cream/50">
             <span className="h-px w-8 bg-cream/25" />
             <FolderOpen className="h-3.5 w-3.5" strokeWidth={1.8} />
-            Páginas do livro — pasta public/book/
+            {site.galleryPlatesTitle}
           </h2>
           <p className="mb-8 max-w-2xl text-sm leading-relaxed text-cream/55">
-            Estas imagens ficam numa pasta separada, exclusiva do livro, e cada uma recebe o
-            enquadramento gravado no SQLite (a página final e os interlúdios são só texto).
+            {site.galleryPlatesNote}
           </p>
           <BookPlates pages={pages} />
         </section>
 
         <footer className="mt-20 border-t border-cream/10 pt-6 text-xs text-cream/40">
-          {site.name} · acervo servido por SQLite (data/atelier.sqlite)
+          {site.name} · {site.galleryFooterNote}
         </footer>
       </div>
     </main>

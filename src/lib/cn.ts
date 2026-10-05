@@ -19,3 +19,11 @@ export function splitEmphasis(text: string): Array<{ text: string; em: boolean }
     .filter((p) => p !== "")
     .map((part, i) => ({ text: part, em: i % 2 === 1 }));
 }
+
+/**
+ * Troca {marcadores} por valores — usado nos textos editáveis do banco,
+ * como "As {obras} obras do estúdio e as {paginas} páginas de *{livro}*".
+ */
+export function fillTemplate(text: string, values: Record<string, string>): string {
+  return text.replace(/\{(\w+)\}/g, (whole, key: string) => values[key] ?? whole);
+}

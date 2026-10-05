@@ -162,7 +162,7 @@ export default function LayoutStudio({ book, pages: initial }: { book: BookMeta;
   }
 
   return (
-    <div className="min-h-screen bg-soil-900 pb-20">
+    <div className="scope-dark min-h-screen bg-soil-900 pb-20">
       {/* topo */}
       <header className="sticky top-0 z-30 border-b border-cream/10 bg-soil-900/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4 md:px-8">

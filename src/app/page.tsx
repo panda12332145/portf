@@ -9,7 +9,7 @@ import Footer from "@/components/site/Footer";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import { SectionHeader } from "@/components/site/SectionHeader";
 import BookSection from "@/components/book/BookSection";
-import { getArtworks, getCommissions, getFaqs, getSite } from "@/db/queries";
+import { getArtworks, getCommissions, getFaqs, getSite, getSiteSettings } from "@/db/queries";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -20,12 +20,13 @@ export default function HomePage() {
   const artworks = getArtworks();
   const faqs = getFaqs();
   const types = getCommissions();
+  const settings = getSiteSettings();
 
   return (
     <SmoothScroll>
       <Background image={site.backgroundImage} />
       <Butterflies />
-      <Navbar name={site.name} />
+      <Navbar site={site} />
 
       <main className="relative z-10">
         <Hero site={site} />
@@ -61,13 +62,7 @@ export default function HomePage() {
           lede={site.faqSectionLede}
         />
 
-        <Commission
-          types={types}
-          eyebrow={site.commissionSectionEyebrow}
-          title={site.commissionSectionTitle}
-          lede={`${site.commissionSectionLede} ${site.commissionNote}`}
-          note={site.commissionNote}
-        />
+        <Commission types={types} site={site} settings={settings} />
       </main>
 
       <Footer site={site} />

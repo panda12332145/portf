@@ -27,6 +27,55 @@
   /* paleta do livro */
   --color-parchment: #e8ddc6;
   --color-gold: #a8843e;
+
+  /* tokens de tema (trocam no modo claro) */
+  --color-strong: #25170a;
+  --color-on-strong: #fffaf0;
+  --color-accent-on-strong: #ffdf80;
+}
+
+/* ------------------------------------------------------------------
+ *  Modo claro
+ *  O site é escrito com dois tokens semânticos: `cream` é a tinta
+ *  (texto) e `soil` é o papel (fundo). Aqui eles são invertidos e os
+ *  dourados são escurecidos para continuarem legíveis no papel claro.
+ *  Áreas que devem seguir escuras (palco do livro 3D, lightbox) usam
+ *  a classe .scope-dark e mantêm a paleta original.
+ * ------------------------------------------------------------------ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-soil-900: #f7f0e0;
+  --color-soil-800: #efe4cd;
+  --color-cream: #2a1c0c;
+
+  --color-sun-100: #5b4310;
+  --color-sun-200: #6d4f0d;
+  --color-sun-300: #8a6206;
+  --color-sun-400: #c98a06;
+  --color-sun-500: #a9750a;
+  --color-sun-600: #8a5f08;
+
+  --color-strong: #241708;
+  --color-on-strong: #fdf6e6;
+  --color-accent-on-strong: #ffdf80;
+}
+
+/* volta à paleta escura dentro de um bloco (palco do livro, modais) */
+.scope-dark {
+  color-scheme: dark;
+  --color-soil-900: #170e05;
+  --color-soil-800: #241708;
+  --color-cream: #fffaf0;
+  --color-sun-100: #fff6da;
+  --color-sun-200: #ffedb0;
+  --color-sun-300: #ffdf80;
+  --color-sun-400: #ffcb3d;
+  --color-sun-500: #f5b301;
+  --color-sun-600: #cf8f00;
+  --color-strong: #25170a;
+  --color-on-strong: #fffaf0;
+  --color-accent-on-strong: #ffdf80;
 }
 
 html {
@@ -40,6 +89,7 @@ body {
   font-optical-sizing: auto;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.45s ease, color 0.45s ease;
 }
 
 ::selection {
@@ -58,6 +108,17 @@ body {
   background: #6b5118;
   border-radius: 999px;
   border: 2px solid #150d04;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #ece0c6;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c9ae74;
+  border-color: #ece0c6;
+}
+[data-theme="light"] {
+  scrollbar-color: #c9ae74 #ece0c6;
 }
 
 .styles-scroll {

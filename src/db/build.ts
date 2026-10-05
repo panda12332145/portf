@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DDL, TABLES } from "./schema";
+import { ensureDefaults, type DefaultsReport } from "./defaults";
 import { openDatabase, type SqliteDatabase, type SqlValue } from "./sqlite";
 import { imageSize } from "../lib/image-size";
 import { autoLayout, clampLayout, type PageLayout } from "../lib/layout";
@@ -33,6 +34,10 @@ export interface BuildReport {
   faqs: number;
   commissions: number;
   missingImages: string[];
+  /** e-mail da conta administrativa (nunca a senha) */
+  adminEmail: string | null;
+  /** preenchido só quando a conta foi criada agora, para mostrar uma vez */
+  adminPassword?: string;
 }
 
 /**
@@ -62,6 +67,7 @@ export function buildDatabase(
       db.pragma("foreign_keys = ON");
     }
     db.exec(DDL);
+    const defaults: DefaultsReport = ensureDefaults(db, !quiet);
 
     db.tx(() => {
       /* ----------------------------- site_meta ---------------------- */
@@ -258,6 +264,7 @@ export function buildDatabase(
       faqs: count("faqs"),
       commissions: count("commissions"),
       missingImages,
+      ...defaults,
     };
 
     if (!quiet) {
@@ -298,6 +305,17 @@ export function ensureDatabase(): string {
     if (precisaPopular) buildDatabase({ quiet: true });
     assured = true;
   }
+
+  // bancos criados antes do painel administrativo: garante as tabelas
+  // novas (settings/admins/sessions/requests) sem mexer no conteúdo
+  const db = openDatabase(file);
+  try {
+    db.exec(DDL);
+    ensureDefaults(db, false);
+  } finally {
+    db.close();
+  }
+
   return file;
 }
 

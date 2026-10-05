@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPageBySlug, resetPageLayout, savePageLayout } from "@/db/queries";
 import { clampLayout, type PageLayout } from "@/lib/layout";
+import { guard } from "@/lib/admin/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
  *         rotation?, radius?, platePad?, shadow? } para ajustar à mão.
  */
 export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  // só a administradora ajusta o enquadramento
+  const auth = await guard();
+  if (!auth.ok) return auth.response;
+
   const { slug } = await params;
   let body: Record<string, unknown> = {};
   try {
