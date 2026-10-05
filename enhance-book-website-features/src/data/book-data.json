@@ -1,0 +1,122 @@
+{
+  "book": {
+    "slug": "o-jardim-das-horas",
+    "title": "O Jardim das Horas",
+    "subtitle": "Um livro ilustrado interativo sobre as horas do dia",
+    "author": "Marina Almeida",
+    "description": "Um conto ilustrado em dez páginas que atravessa um jardim onde cada flor guarda uma hora do dia. Da porta do alvorecer até a última semente plantada na escuridão, cada ilustração revela uma pequena fábula sobre tempo, memória e ternura."
+  },
+  "arts": [
+    {
+      "order": 0,
+      "slug": "cover",
+      "isCover": true,
+      "title": "Capa — O Jardim das Horas",
+      "type": "Pintura de capa (técnica mista digital)",
+      "description": "Arte de capa que apresenta o portão de ferro forjado coberto por flores douradas, abrindo-se para o jardim que guarda as horas. Pintada em tons esmeralda e âmbar para evocar a encadernação em tecido de um livro antigo.",
+      "image": "/img/arts/cover.jpg",
+      "folio": null
+    },
+    {
+      "order": 1,
+      "slug": "p1",
+      "title": "A Porta do Alvorecer",
+      "type": "Ilustração digital em aquarela",
+      "description": "O primeiro raio de sol atravessa o portão esquecido do jardim. As cores quentes do amanhecer se misturam ao orvalho ainda frio da noite, anunciando a primeira flor-hora do dia.",
+      "poem": ["Há um jardim onde cada flor", "guarda uma hora do dia."],
+      "image": "/img/arts/p1.jpg",
+      "folio": 1
+    },
+    {
+      "order": 2,
+      "slug": "p2",
+      "title": "O Raposo das Horas Perdidas",
+      "type": "Ilustração digital, pintura atmosférica",
+      "description": "Um raposo de cauda longa patrulha os canteiros ao entardecer, recolhendo com cuidado os minutos que caem das pétalas murchas antes que se percam para sempre.",
+      "poem": ["Um raposo vigia as horas que caem,", "recolhendo minutos com a cauda."],
+      "image": "/img/arts/p2.jpg",
+      "folio": 2
+    },
+    {
+      "order": 3,
+      "slug": "p3",
+      "title": "O Prado dos Relógios",
+      "type": "Ilustração digital botânica",
+      "description": "Um campo inteiro de flores em formato de relógio, cujas pétalas-ponteiro só se abrem quando ninguém está com pressa. Um estudo botânico impossível, pintado com extremo cuidado floral.",
+      "poem": ["As flores-relógio só desabrocham", "quando o tempo anda devagar."],
+      "image": "/img/arts/p3.jpg",
+      "folio": 3
+    },
+    {
+      "order": 4,
+      "slug": "p4",
+      "title": "O Rio de Luz",
+      "type": "Pintura digital de paisagem",
+      "description": "Um rio dourado serpenteia pelo jardim, iluminado por dentro como se carregasse pequenos sóis dissolvidos. Diz a lenda que quem bebe dessa água nunca mais esquece um rosto amado.",
+      "poem": ["Quem bebe dessa água dourada", "lembra de tudo com ternura."],
+      "image": "/img/arts/p4.jpg",
+      "folio": 4
+    },
+    {
+      "order": 5,
+      "slug": "p5",
+      "title": "A Coruja Bibliotecária",
+      "type": "Ilustração digital, retrato de personagem",
+      "description": "Entre pilhas de livros costurados com penas, a coruja guardiã cataloga cada segundo vivido no jardim, organizando a memória do tempo em estantes que só ela sabe ler.",
+      "poem": ["Ela cataloga os segundos", "em livros costurados com asas."],
+      "image": "/img/arts/p5.jpg",
+      "folio": 5
+    },
+    {
+      "order": 6,
+      "slug": "p6",
+      "title": "O Chá do Entardecer",
+      "type": "Ilustração digital de cena",
+      "description": "Às seis em ponto, as lebres do jardim estendem a toalha sobre a grama e servem chá acompanhado de bolinhos feitos de luz de estrela recém-colhida.",
+      "poem": ["Às seis, as lebres servem o chá", "com bolinhos de luz de estrela."],
+      "image": "/img/arts/p6.jpg",
+      "folio": 6
+    },
+    {
+      "order": 7,
+      "slug": "p7",
+      "title": "O Jardim da Meia-Noite",
+      "type": "Pintura digital noturna",
+      "description": "Quando o relógio do jardim bate meia-noite, as flores-lua desabrocham em prata e os vaga-lumes pousam sobre as pétalas para ler, em voz alta, as histórias guardadas no orvalho.",
+      "poem": ["De noite, as flores-lua se abrem", "e os vaga-lumes leem em voz alta."],
+      "image": "/img/arts/p7.jpg",
+      "folio": 7
+    },
+    {
+      "order": 8,
+      "slug": "p8",
+      "title": "As Sementes de Estrelas",
+      "type": "Ilustração digital, cena com personagem",
+      "description": "Uma menina de avental plantador caminha pelo canteiro mais escuro do jardim, enterrando pequenas estrelas no solo noturno para que, com o tempo, nasçam manhãs inteiras.",
+      "poem": ["A menina planta estrelas no escuro", "para colher manhãs inteiras."],
+      "image": "/img/arts/p8.jpg",
+      "folio": 8
+    },
+    {
+      "order": 9,
+      "slug": "p9",
+      "title": "A Primeira Hora",
+      "type": "Ilustração digital, cena final",
+      "description": "Da última semente plantada nasce um broto tímido — o início de um novo dia, miudinho e verde, crescendo devagar, sem pressa alguma, como todo começo merece.",
+      "poem": ["E de cada semente nasce um dia —", "miudinho, verde e sem pressa."],
+      "image": "/img/arts/p9.jpg",
+      "folio": 9
+    },
+    {
+      "order": 10,
+      "slug": "finale",
+      "finale": true,
+      "title": "Fim",
+      "type": "Página ornamentada",
+      "description": "Página de encerramento do livro, decorada com ornamentos dourados que ecoam a moldura da capa.",
+      "poem": ["Que cada hora tua", "seja um jardim."],
+      "image": null,
+      "folio": null
+    }
+  ]
+}
