@@ -11,6 +11,41 @@ Um **único projeto Next.js** que junta, num só site:
 
 ---
 
+## 0. Ligar o site com um clique (testes locais)
+
+### Windows — `iniciar.bat`
+
+Duplo clique em **`iniciar.bat`** (ou rode `iniciar.bat` no terminal). Ele faz tudo:
+
+1. confere se o Node instalado é 22+ (o banco SQLite usa `better-sqlite3`);
+2. instala as dependências na primeira vez;
+3. sincroniza o banco `data/atelier.sqlite`;
+4. sobe o servidor em `http://localhost:3000`;
+5. **abre o navegador sozinho** assim que o site responde;
+6. mostra o endereço da sua rede (ex.: `http://192.168.0.10:3000`) para testar no celular.
+
+Deixe a janela aberta — `Ctrl+C` encerra o servidor.
+
+| comando | o que faz |
+| --- | --- |
+| `iniciar.bat` | modo desenvolvimento na porta 3000 |
+| `iniciar.bat 4000` | desenvolvimento na porta 4000 |
+| `iniciar.bat prod` | build de produção + servidor (mais leve para testar) |
+| `iniciar.bat 4000 prod` | idem, na porta 4000 |
+| `iniciar.bat noopen` | não abre o navegador automaticamente |
+
+### Linux / macOS / WSL — `iniciar.sh`
+
+```bash
+chmod +x iniciar.sh
+./iniciar.sh            # dev na 3000
+./iniciar.sh 4000 prod  # produção na 4000
+```
+
+Os dois scripts ficam na raiz do projeto e não alteram nada além de `data/atelier.sqlite`.
+
+---
+
 ## 1. Rodando
 
 Requer **Node 22+** (o `better-sqlite3` é nativo).
@@ -30,7 +65,8 @@ Outros comandos:
 | `npm run db:import -- --list` | só lista o que seria importado |
 | `npm run db:inspect` | resumo do banco (livro, páginas, contagens) |
 | `npm run db:inspect -- --sql "SELECT * FROM pages"` | SQL livre |
-| `npm run build` / `npm start` | build e produção |
+| `npm run dev:lan` | como o `dev`, mas escutando na rede (`0.0.0.0`) para testar no celular |
+| `npm run build` / `npm run start:lan` | build e produção (escuta em `0.0.0.0`) |
 | `npm run typecheck` | TypeScript |
 
 O arquivo `data/atelier.sqlite` **é versionado de propósito**: clonando o repositório o site já funciona. Se ele não existir (ou estiver vazio), o servidor o recria sozinho na primeira requisição (`ensureDatabase()`), usando `src/content/seed.ts` + `public/book/`.

@@ -12,8 +12,10 @@
     "db:import": "tsx scripts/db-import-book.ts",
     "db:inspect": "tsx scripts/db-inspect.ts",
     "dev": "npm run db:build && next dev",
+    "dev:lan": "npm run db:build && next dev -H 0.0.0.0",
     "build": "npm run db:build && next build",
     "start": "next start",
+    "start:lan": "next start -H 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
