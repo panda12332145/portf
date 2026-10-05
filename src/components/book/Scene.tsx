@@ -80,7 +80,8 @@ function CameraRig({
   progressRef: React.MutableRefObject<{ openT: number; flipped: number }>;
 }) {
   const { camera, pointer, size } = useThree();
-  const target = useRef(new THREE.Vector3(0, 1.28, 0));
+  const target = useRef(new THREE.Vector3(0, 1.4, 0));
+  const look = useRef(new THREE.Vector3(0, 1.4, 0.1));
   const desired = useRef(new THREE.Vector3());
   const intro = useRef(0);
 
@@ -95,27 +96,30 @@ function CameraRig({
     const fov = (state.camera as THREE.PerspectiveCamera).fov * (Math.PI / 180);
     const halfTan = Math.tan(fov / 2);
 
-    // altura/largura que precisam caber na tela (livro em pé + dobra aberta)
     // quanto precisa caber na tela: livro fechado (retrato estreito) × aberto
-    const neededH = THREE.MathUtils.lerp(3.26, 3.3, open) + 0.3 * (1 - ease);
-    const neededW = THREE.MathUtils.lerp(2.62, 4.95, open);
+    // no celular (retrato estreito) o livro ganha folga extra
+    const narrow = aspect < 0.85 ? 1.16 : 1;
+    const neededH = (THREE.MathUtils.lerp(3.92, 4.26, open) + 0.34 * (1 - ease)) * narrow;
+    const neededW = THREE.MathUtils.lerp(3.02, 5.0, open) * narrow;
     const dH = neededH / (2 * halfTan);
     const dW = neededW / (2 * halfTan * aspect);
     const dist = Math.max(dH, dW) * 1.02 * (1 + 0.12 * (1 - ease));
 
     desired.current.set(
       pointer.x * 0.55,
-      THREE.MathUtils.lerp(1.98, 1.64, open) - pointer.y * 0.3,
+      THREE.MathUtils.lerp(2.2, 1.92, open) - pointer.y * 0.3,
       dist,
     );
-    camera.position.lerp(desired.current, 0.06);
+    const k = 1 - Math.exp(-dt * 4.5); // suaviza por tempo, não por frame
+    camera.position.lerp(desired.current, k);
 
     target.current.set(
       pointer.x * 0.12,
-      THREE.MathUtils.lerp(1.44, 1.28, open) - pointer.y * 0.1,
+      THREE.MathUtils.lerp(1.56, 1.56, open) - pointer.y * 0.1,
       0.12,
     );
-    camera.lookAt(target.current);
+    look.current.lerp(target.current, k);
+    camera.lookAt(look.current);
   });
 
   return null;

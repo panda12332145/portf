@@ -181,8 +181,10 @@ export default function BookExperience({ book, pages }: { book: BookMeta; pages:
         </div>
       )}
 
-      {/* vinheta própria do palco */}
+      {/* vinheta própria do palco + véus para a interface respirar */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_85%_at_50%_45%,transparent_52%,rgba(8,5,2,0.55)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#0c0805]/85 via-[#0c0805]/35 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#0c0805]/90 via-[#0c0805]/45 to-transparent" />
 
       {/* interface */}
       <div className="pointer-events-none absolute inset-0 z-40 flex flex-col">
@@ -198,10 +200,10 @@ export default function BookExperience({ book, pages }: { book: BookMeta; pages:
               <Feather className="h-3 w-3" strokeWidth={1.6} />
               Livro ilustrado interativo
             </p>
-            <p className="mt-1 font-book text-lg italic text-cream/75 sm:text-xl">
+            <p className="mt-1 font-book text-base italic text-cream/75 sm:text-xl">
               {book.subtitle}
             </p>
-            <p className="mt-1 text-[11px] uppercase tracking-[0.24em] text-cream/45">
+            <p className="mt-1 hidden text-[11px] uppercase tracking-[0.24em] text-cream/45 sm:block">
               {book.author} · {book.publisher} · {book.edition}
             </p>
             <div className="mt-2 h-px w-28 bg-gradient-to-r from-sun-400 to-transparent sm:w-40" />

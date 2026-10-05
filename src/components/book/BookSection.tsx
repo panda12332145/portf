@@ -24,7 +24,7 @@ export default async function BookSection() {
         />
 
         <div className="relative mt-10 overflow-hidden rounded-2xl border border-cream/12 bg-[#120d07] shadow-[0_50px_140px_-60px_rgba(0,0,0,0.95)]">
-          <div className="h-[76svh] min-h-[520px] w-full sm:h-[80svh] lg:h-[82svh]">
+          <div className="h-[84svh] min-h-[540px] w-full sm:h-[80svh] lg:h-[82svh]">
             <BookExperienceLoader book={book} pages={pages} />
           </div>
         </div>
