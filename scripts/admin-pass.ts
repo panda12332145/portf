@@ -49,6 +49,12 @@ async function main() {
     if (existing) {
       changePassword(existing.id, finalPassword);
       console.log(`[admin] senha atualizada para ${existing.email}`);
+    } else if (admins.length === 1) {
+      // há uma única conta: o e-mail informado substitui o antigo
+      const antigo = admins[0];
+      updateProfile(antigo.id, { email });
+      changePassword(antigo.id, finalPassword);
+      console.log(`[admin] conta renomeada: ${antigo.email} → ${email}`);
     } else {
       const created = createAdminAccount({ email, password: finalPassword });
       console.log(`[admin] conta criada: ${created.email}`);
@@ -68,7 +74,6 @@ async function main() {
   console.log("[admin] guarde agora — ela não fica salva em lugar nenhum em texto puro");
 }
 
-void updateProfile;
 main().catch((err) => {
   console.error("[admin] falhou:", err);
   process.exit(1);
