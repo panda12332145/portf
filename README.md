@@ -299,3 +299,14 @@ npm start
 | --- | --- |
 | `sunflower-parallax-art-portfolio` | home completa (hero, fundo em parallax, borboletas, portfólio, FAQ, comissões) — agora alimentada pelo SQLite |
 | `enhance-book-website-features` | livro 3D (folhas com física, capa, cenas, lightbox, galeria) — **reposicionado de pé**, com enquadramento por banco e novo desenho de página |
+
+## 📊 Métricas
+
+<!-- metrics:start -->
+| Métrica | Valor |
+|---|---|
+| ⭐ Stars | 0 |
+| 🍴 Forks | 0 |
+| 📌 Issues abertas | 0 |
+| 🕐 Último commit | 2026-10-05 |
+<!-- metrics:end -->
