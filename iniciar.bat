@@ -108,8 +108,23 @@ if errorlevel 1 (
 set "NODE_OPTIONS=!NODE_FLAGS!"
 
 rem ------------------------ dependencias ------------------------------
-if not exist "node_modules\next\package.json" (
-  echo [2/4] Instalando dependencias ^(primeira vez, pode demorar^)...
+rem Procura os pacotes essenciais: se algum faltar (node_modules antigo,
+rem de uma versao anterior do projeto) a instalacao roda de novo. Tambem
+rem reinstala quando o package.json muda depois da ultima instalacao.
+set "NEED_INSTALL=0"
+for %%p in (next tsx react three "@noble/hashes" nodemailer framer-motion lucide-react tailwindcss) do (
+  if not exist "node_modules\%%~p\package.json" set "NEED_INSTALL=1"
+)
+if "!NEED_INSTALL!"=="0" (
+  if not exist "node_modules\.atelier-package.json" (
+    set "NEED_INSTALL=1"
+  ) else (
+    fc /b "package.json" "node_modules\.atelier-package.json" >nul 2>&1 || set "NEED_INSTALL=1"
+  )
+)
+
+if "!NEED_INSTALL!"=="1" (
+  echo [2/4] Instalando/atualizando dependencias ^(pode demorar na primeira vez^)...
   call npm install --no-audit --no-fund
   if errorlevel 1 (
     echo.
@@ -128,6 +143,7 @@ if not exist "node_modules\next\package.json" (
       goto fim_erro
     )
   )
+  copy /y "package.json" "node_modules\.atelier-package.json" >nul 2>&1
 ) else (
   echo [2/4] Dependencias OK
 )
@@ -136,8 +152,20 @@ rem --------------------------- banco ----------------------------------
 echo [3/4] Sincronizando o banco SQLite ^(data\atelier.sqlite^)...
 call npm run db:build
 if errorlevel 1 (
-  echo [X] Falha ao preparar o banco.
-  goto fim_erro
+  rem pode ser dependencia faltando (node_modules antigo): tenta consertar
+  echo.
+  echo [!] O banco nao subiu. Reinstalando as dependencias e tentando de novo...
+  call npm install --no-audit --no-fund
+  if not errorlevel 1 (
+    copy /y "package.json" "node_modules\.atelier-package.json" >nul 2>&1
+    call npm run db:build
+  )
+  if errorlevel 1 (
+    echo [X] Falha ao preparar o banco.
+    echo     Se a mensagem acima citar um modulo ^(Cannot find module ...^),
+    echo     feche esta janela, apague a pasta node_modules e rode o iniciar.bat de novo.
+    goto fim_erro
+  )
 )
 
 rem ------------------------ endereco da rede --------------------------

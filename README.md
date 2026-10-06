@@ -13,6 +13,12 @@ Um **único projeto Next.js** que junta, num só site:
 
 ## 0. Ligar o site com um clique (testes locais)
 
+> O launcher **confere as dependências em toda execução**: se faltar algum
+> pacote (por exemplo depois de um `git pull` que adicionou uma biblioteca) ou
+> se o `package.json` tiver mudado desde a última instalação, ele roda
+> `npm install` antes de subir o site. Se o banco falhar por módulo faltando,
+> ele reinstala e tenta de novo automaticamente.
+
 ### Windows — `iniciar.bat`
 
 Duplo clique em **`iniciar.bat`** (ou rode `iniciar.bat` no terminal). Ele faz tudo:
@@ -288,6 +294,7 @@ npm start
 | `EPERM … rmdir node_modules` no Windows | editor aberto, antivírus ou OneDrive segurando a pasta. Feche-os e rode de novo (o `iniciar.bat` já tenta reinstalar limpando `node_modules`). |
 | esqueci a senha do painel | `npm run admin:pass` (mostra uma senha nova) |
 | quero trocar o e-mail da conta | painel → **Conta**, ou `npm run admin:pass -- email@x.com senha` |
+| `Cannot find module '@noble/hashes/argon2.js'` (ou qualquer outro módulo) | seu `node_modules` é de uma versão anterior do projeto. O `iniciar.bat`/`iniciar.sh` já detectam isso e reinstalam sozinhos; manualmente: apague a pasta `node_modules` e rode de novo (ou só `npm install`). |
 | quero recomeçar o banco do zero | `npm run db:seed` (mantém conta, configurações e pedidos) |
 | voltar ao tema escuro fixo | no seletor de tema do topo, escolha **Escuro** (ou limpe a chave `atelier-tema` do navegador para voltar a seguir o sistema) |
 

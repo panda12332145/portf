@@ -68,8 +68,23 @@ else
 fi
 
 # --------------------------- dependências ---------------------------
-if [ ! -f node_modules/next/package.json ]; then
-  echo "[2/4] Instalando dependências (primeira vez, pode demorar)…"
+# Procura os pacotes essenciais: se algum faltar (node_modules de uma versão
+# anterior do projeto) a instalação roda de novo. Também reinstala quando o
+# package.json muda depois da última instalação.
+need_install=0
+for dep in next tsx react three @noble/hashes nodemailer framer-motion lucide-react tailwindcss; do
+  [ -f "node_modules/$dep/package.json" ] || need_install=1
+done
+if [ "$need_install" = "0" ]; then
+  if [ ! -f node_modules/.atelier-package.json ]; then
+    need_install=1
+  elif ! cmp -s package.json node_modules/.atelier-package.json; then
+    need_install=1
+  fi
+fi
+
+if [ "$need_install" = "1" ]; then
+  echo "[2/4] Instalando/atualizando dependências (pode demorar na primeira vez)…"
   if ! npm install --no-audit --no-fund; then
     echo
     echo "[!] A instalação falhou. Causas comuns: editor aberto segurando a pasta,"
@@ -83,13 +98,28 @@ if [ ! -f node_modules/next/package.json ]; then
       exit 1
     }
   fi
+  cp -f package.json node_modules/.atelier-package.json 2>/dev/null || true
 else
   echo "[2/4] Dependências OK"
 fi
 
 # ------------------------------ banco -------------------------------
 echo "[3/4] Sincronizando o banco SQLite (data/atelier.sqlite)…"
-npm run db:build || { echo "[X] falha ao preparar o banco"; exit 1; }
+if ! npm run db:build; then
+  # pode ser dependência faltando (node_modules antigo): tenta consertar
+  echo
+  echo "[!] O banco não subiu. Reinstalando as dependências e tentando de novo…"
+  if npm install --no-audit --no-fund; then
+    cp -f package.json node_modules/.atelier-package.json 2>/dev/null || true
+    npm run db:build || true
+  fi
+fi
+if ! npm run db:build >/dev/null 2>&1; then
+  echo "[X] falha ao preparar o banco"
+  echo "    Se a mensagem acima citar um módulo (Cannot find module ...),"
+  echo "    apague a pasta node_modules e rode o iniciar.sh de novo."
+  exit 1
+fi
 
 # --------------------------- endereço de rede ------------------------
 # primeiro IPv4 que não seja link-local (169.254.x) nem loopback
