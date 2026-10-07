@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+next-env.d.ts
+*.tsbuildinfo
+
+# cache de build do banco (o arquivo final data/atelier.sqlite é versionado de propósito,
+# para o site funcionar assim que o repositório é clonado)
+data/*.sqlite-journal
+data/*.sqlite-wal
+data/*.sqlite-shm
+
+# chave do cofre (AES-256-GCM) — gerada no primeiro uso, nunca versionada
+.atelier-secret

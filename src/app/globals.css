@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+@theme {
+  /* tipografia — Fraunces/Manrope no site, Cormorant no livro (fontes self-hosted) */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-book: "Cormorant Garamond", "Georgia", serif;
+
+  /* paleta do estúdio */
+  --color-cream: #fffaf0;
+  --color-ink: #25170a;
+
+  --color-sun-100: #fff6da;
+  --color-sun-200: #ffedb0;
+  --color-sun-300: #ffdf80;
+  --color-sun-400: #ffcb3d;
+  --color-sun-500: #f5b301;
+  --color-sun-600: #cf8f00;
+
+  --color-leaf-500: #5b8a51;
+  --color-leaf-700: #2f5233;
+  --color-leaf-900: #1c3524;
+
+  --color-soil-900: #170e05;
+  --color-soil-800: #241708;
+
+  /* paleta do livro */
+  --color-parchment: #e8ddc6;
+  --color-gold: #a8843e;
+
+  /* tokens de tema (trocam no modo claro) */
+  --color-strong: #25170a;
+  --color-on-strong: #fffaf0;
+  --color-accent-on-strong: #ffdf80;
+}
+
+/* ------------------------------------------------------------------
+ *  Modo claro
+ *  O site é escrito com dois tokens semânticos: `cream` é a tinta
+ *  (texto) e `soil` é o papel (fundo). Aqui eles são invertidos e os
+ *  dourados são escurecidos para continuarem legíveis no papel claro.
+ *  Áreas que devem seguir escuras (palco do livro 3D, lightbox) usam
+ *  a classe .scope-dark e mantêm a paleta original.
+ * ------------------------------------------------------------------ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-soil-900: #f7f0e0;
+  --color-soil-800: #efe4cd;
+  --color-cream: #2a1c0c;
+
+  --color-sun-100: #5b4310;
+  --color-sun-200: #6d4f0d;
+  --color-sun-300: #8a6206;
+  --color-sun-400: #c98a06;
+  --color-sun-500: #a9750a;
+  --color-sun-600: #8a5f08;
+
+  --color-strong: #241708;
+  --color-on-strong: #fdf6e6;
+  --color-accent-on-strong: #ffdf80;
+}
+
+/* volta à paleta escura dentro de um bloco (palco do livro, modais) */
+.scope-dark {
+  color-scheme: dark;
+  --color-soil-900: #170e05;
+  --color-soil-800: #241708;
+  --color-cream: #fffaf0;
+  --color-sun-100: #fff6da;
+  --color-sun-200: #ffedb0;
+  --color-sun-300: #ffdf80;
+  --color-sun-400: #ffcb3d;
+  --color-sun-500: #f5b301;
+  --color-sun-600: #cf8f00;
+  --color-strong: #25170a;
+  --color-on-strong: #fffaf0;
+  --color-accent-on-strong: #ffdf80;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: var(--color-soil-900);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  font-optical-sizing: auto;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.45s ease, color 0.45s ease;
+}
+
+::selection {
+  background: var(--color-sun-400);
+  color: var(--color-ink);
+}
+
+/* ---------- barras de rolagem ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #150d04;
+}
+::-webkit-scrollbar-thumb {
+  background: #6b5118;
+  border-radius: 999px;
+  border: 2px solid #150d04;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #ece0c6;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c9ae74;
+  border-color: #ece0c6;
+}
+[data-theme="light"] {
+  scrollbar-color: #c9ae74 #ece0c6;
+}
+
+.styles-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 23, 10, 0.3) transparent;
+}
+.styles-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.styles-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.styles-scroll::-webkit-scrollbar-thumb {
+  background: rgba(37, 23, 10, 0.28);
+  border-radius: 999px;
+}
+.styles-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 23, 10, 0.45);
+}
+
+/* ---------- asas das borboletas ---------- */
+.wing-l {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: flap ease-in-out infinite;
+}
+.wing-r {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: flap ease-in-out infinite;
+}
+@keyframes flap {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.32);
+  }
+}
+
+/* ---------- deslocamento vertical das obras na grade (vem do banco) ---------- */
+@media (min-width: 768px) {
+  .art-shift {
+    margin-top: var(--art-shift, 0rem);
+  }
+}
+
+/* ---------- canvas do livro ---------- */
+canvas {
+  display: block;
+  touch-action: none;
+}
+
+/* ---------- controles de faixa (editor /estudio) ---------- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.18);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px;
+  height: 15px;
+  width: 15px;
+  border-radius: 999px;
+  background: var(--color-sun-400);
+  border: 2px solid #170e05;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+input[type="range"]::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.18);
+}
+input[type="range"]::-moz-range-thumb {
+  height: 13px;
+  width: 13px;
+  border: 2px solid #170e05;
+  border-radius: 999px;
+  background: var(--color-sun-400);
+}
+
+/* ---------- tipografia fluida (títulos grandes) ---------- */
+.display-fluid {
+  font-size: clamp(2.1rem, 1.15rem + 3.6vw, 3.75rem);
+  line-height: 1.1;
+}
+
+/* ---------- menos movimento para quem prefere ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
